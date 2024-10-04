@@ -19,11 +19,11 @@ import { GoogleGenerativeAI, GenerativeModel, EmbedContentResponse } from "@goog
 // Make sure to declare this in your environment or use a type-safe config library
 declare const process: {
   env: {
-    GEMINI_API_KEY: string;
+    NEXT_PUBLIC_GEMINI_API_KEY: string;
   };
 };
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY);
 
 export async function getEmbeddings(text: string): Promise<number[]> {
   // For embeddings, use the Text Embeddings model
