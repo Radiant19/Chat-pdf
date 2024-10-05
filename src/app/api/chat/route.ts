@@ -1,5 +1,10 @@
+import { getContext } from '@/lib/context';
+import { db } from '@/lib/db';
+import { chats } from '@/lib/db/schema';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { eq } from 'drizzle-orm';
 import { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 interface Message {
   role: string;
@@ -7,11 +12,9 @@ interface Message {
 }
 
 export async function POST(req: NextRequest) {
-  const encoder = new TextEncoder();
-
   try {
-    const { messages } = await req.json();
-    
+    const { messages, chatId } = await req.json();
+
     if (!Array.isArray(messages)) {
       return new Response('Messages must be an array', { status: 400 });
     }
@@ -21,38 +24,34 @@ export async function POST(req: NextRequest) {
       throw new Error("Gemini API key is not set");
     }
 
+    const lastMessage = messages[messages.length-1];
+
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    
+    // const message1= message:[prompt1,...messages.filter((message: Message) => message.role === "user")]
+    // Format the prompt for Gemini
+    // const prompt = messages.map((msg: Message) => `${msg.role}: ${msg.content}`).join('\n');
 
-    // Simplify the input format
-    const prompt = messages.map((msg: Message) => `${msg.role}: ${msg.content}`).join('\n');
+    // console.log("Sending prompt to Gemini:", prompt);
 
-    console.log("Sending prompt to Gemini:", prompt);
+    // const result = await model.generateContentStream(prompt);
+    // console.log(result);
+    // // // Accumulate the chunks as the full response
+    
+    // for await (const chunk of result.stream) {
+    //   const chunkText = chunk.text();
+    //   console.log(chunkText)
+    // }
 
-    const result = await model.generateContentStream(prompt);
+    // // console.log("Full response from Gemini:", fullResponse);
 
-    // Create a ReadableStream to process the chunks
-    const stream = new ReadableStream({
-      async start(controller) {
-        let fullResponse = '';
-        for await (const chunk of result.stream) {
-          const text = chunk.text();
-          fullResponse += text;
-          console.log("Received chunk:", text);  // Log each chunk
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text })}\n\n`));
-        }
-        console.log("Full response:", fullResponse);  // Log the full response
-        controller.close();
-      },
-    });
-
-    return new Response(stream, {
-      headers: {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
-      },
-    });
+    // // Return the response in JSON format
+    // // return NextResponse.json({
+    // //   role: "assistant",
+    // //   content: fullResponse
+    // // });
+    return NextResponse.json({msg: "hi"}) 
 
   } catch (error) {
     console.error("Error processing request:", error);
@@ -65,3 +64,4 @@ export async function POST(req: NextRequest) {
     });
   }
 }
+ 
