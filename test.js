@@ -22,4 +22,4 @@ const _chats = await db.select().from(chats).where(eq(chats.id,chatId))
       AI assistant will not apologize for previous responses, but instead will indicated new information was gained.
       AI assistant will not invent anything that is not drawn directly from the context.
       `,
-    };s
+    };

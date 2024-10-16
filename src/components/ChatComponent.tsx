@@ -18,7 +18,6 @@ const ChatComponent = ({ chatId }: Props) => {
     },
   });
   console.log(input,messages);
-  console.log("mallu");
 
 
   React.useEffect(() => {
