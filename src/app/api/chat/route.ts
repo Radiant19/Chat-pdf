@@ -182,8 +182,9 @@
 //   }
 // }
 
+// CORRECT CODE
 
-
+import MessageList from '@/components/MessageList';
 import { getContext } from '@/lib/context';
 import { db } from '@/lib/db';
 import { chats } from '@/lib/db/schema';
@@ -258,8 +259,8 @@ export async function POST(req: NextRequest) {
       content: text
     });
     console.log(messages)
-
-    return NextResponse.json({ messages });
+    
+   return NextResponse.json({ messages });
 
   } catch (error) {
     console.error("Error processing request:", error);
@@ -269,3 +270,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
+
+
